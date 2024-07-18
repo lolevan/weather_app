@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Forecast</title>
+</head>
+<body>
+    <h1>Weather Forecast</h1>
+    <form method="get" action="">
+        <label for="city">Enter City:</label>
+        <input type="text" id="city" name="city" required>
+        <button type="submit">Get Weather</button>
+    </form>
+    {% if weather_data %}
+        <h2>Weather Data:</h2>
+        <pre>{{ weather_data }}</pre>
+    {% endif %}
+</body>
+</html>
