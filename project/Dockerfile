@@ -13,11 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем все остальные файлы проекта в рабочую директорию
 COPY . /app/
 
-# Выполняем миграции
-RUN python manage.py migrate
-
 # Открываем порт 8000 для доступа
 EXPOSE 8000
 
-# Устанавливаем команду по умолчанию для запуска сервера
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Выполняем миграции и запускаем сервер
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
