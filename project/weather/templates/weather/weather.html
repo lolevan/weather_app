@@ -1,3 +1,5 @@
+{% load custom_tags %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,8 +41,25 @@
             <button type="submit" class="btn btn-primary">Get Weather</button>
         </form>
         {% if weather_data %}
-            <h2>Weather Data for {{ city }}</h2>
-            <pre>{{ weather_data }}</pre>
+            <h2>Weather Data for {{ city }} {{ current_date }}</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Time</th>
+                            <th scope="col">Temperature (°C)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for time, temp in weather_data %}
+                            <tr>
+                                <td>{{ time }}</td>
+                                <td>{{ temp }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% elif error_message %}
             <div class="alert alert-danger">{{ error_message }}</div>
         {% endif %}
