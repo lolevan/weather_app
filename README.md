@@ -29,7 +29,7 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <URL вашего репозитория>
+git clone https://github.com/lolevan/weather_app.git
 cd weather_app/project
 ```
 ### 2. Создание и активация виртуального окружения
