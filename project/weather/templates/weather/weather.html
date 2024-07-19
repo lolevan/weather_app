@@ -2,17 +2,48 @@
 <html>
 <head>
     <title>Weather Forecast</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script>
+        $(function () {
+            $("#city").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "https://geocoding-api.open-meteo.com/v1/search",
+                        dataType: "json",
+                        data: {
+                            name: request.term,
+                        },
+                        success: function (data) {
+                            response(
+                                data.results.map(function (city) {
+                                    return city.name;
+                                })
+                            );
+                        },
+                    });
+                },
+                minLength: 2,
+            });
+        });
+    </script>
 </head>
 <body>
-    <h1>Weather Forecast</h1>
-    <form method="get" action="">
-        <label for="city">Enter City:</label>
-        <input type="text" id="city" name="city" required>
-        <button type="submit">Get Weather</button>
-    </form>
-    {% if weather_data %}
-        <h2>Weather Data:</h2>
-        <pre>{{ weather_data }}</pre>
-    {% endif %}
+    <div class="container">
+        <h1 class="mt-5">Weather Forecast</h1>
+        <form method="get" action="" class="form-inline my-4">
+            <label for="city" class="mr-2">Enter City:</label>
+            <input type="text" id="city" name="city" class="form-control mr-2" required>
+            <button type="submit" class="btn btn-primary">Get Weather</button>
+        </form>
+        {% if weather_data %}
+            <h2>Weather Data for {{ city }}</h2>
+            <pre>{{ weather_data }}</pre>
+        {% elif error_message %}
+            <div class="alert alert-danger">{{ error_message }}</div>
+        {% endif %}
+    </div>
 </body>
 </html>
