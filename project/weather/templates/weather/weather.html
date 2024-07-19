@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
         $(function () {
             $("#city").autocomplete({
@@ -29,11 +30,52 @@
                 },
                 minLength: 2,
             });
+
+            // Загружаем историю поиска
+            $('#myHistory').click(function () {
+                $.ajax({
+                    url: "{% url 'get_history' %}",
+                    dataType: "json",
+                    success: function (data) {
+                        $('#historyList').empty();
+                        data.history.forEach(function (city) {
+                            $('#historyList').append('<li class="list-group-item">' + city + ' <button class="btn btn-primary btn-sm float-right" onclick="searchCity(\'' + city + '\')">Go</button></li>');
+                        });
+                        $('#historyModal').modal('show');
+                    }
+                });
+            });
+
+            // Проверьте наличие последнего города
+            {% if show_last_city_modal %}
+                $('#lastCityModalLabel').text('You last searched for {{ last_city }}');
+                $('#lastCityModal').modal('show');
+                $('#yesButton').click(function () {
+                    searchCity('{{ last_city }}');
+                });
+                $('#noButton').click(function () {
+                    $('#lastCityModal').modal('hide');
+                });
+            {% endif %}
         });
+
+        function searchCity(city) {
+            window.location.href = "?city=" + city;
+        }
     </script>
 </head>
 <body>
     <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Weather App</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <button id="myHistory" class="btn btn-secondary">My history</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
         <h1 class="mt-5">Weather Forecast</h1>
         <form method="get" action="" class="form-inline my-4">
             <label for="city" class="mr-2">Enter City:</label>
@@ -41,7 +83,7 @@
             <button type="submit" class="btn btn-primary">Get Weather</button>
         </form>
         {% if weather_data %}
-            <h2>Weather Data for {{ city }} {{ current_date }}</h2>
+            <h2>Weather Data for {{ city }}</h2>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -63,6 +105,45 @@
         {% elif error_message %}
             <div class="alert alert-danger">{{ error_message }}</div>
         {% endif %}
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="historyModalLabel">Search History</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul id="historyList" class="list-group">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Last City Modal -->
+    <div class="modal fade" id="lastCityModal" tabindex="-1" role="dialog" aria-labelledby="lastCityModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="lastCityModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Do you want to search it again?
+                </div>
+                <div class="modal-footer">
+                    <button id="yesButton" class="btn btn-primary">Yes</button>
+                    <button id="noButton" class="btn btn-secondary">No</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
