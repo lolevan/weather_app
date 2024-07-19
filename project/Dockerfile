@@ -13,6 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем все остальные файлы проекта в рабочую директорию
 COPY . /app/
 
+# Устанавливаем переменные окружения
+ENV DOCKER_ENV=1
+
 # Открываем порт 8000 для доступа
 EXPOSE 8000
 
